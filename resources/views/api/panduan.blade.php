@@ -105,6 +105,34 @@ GET /api/dinas/cari?nomor=0123/UN44/OT.00/2025</pre>
     <p class="note"><code>tujuan</code> dan <code>nomor_spd</code> bernilai <code>null</code> untuk dinas dalam kota.
        <code>jenis</code> berisi <code>luar_kota</code> atau <code>dalam_kota</code>.</p>
 
+    <h2>Contoh akses (PHP)</h2>
+    <p class="note">Menggunakan cURL bawaan PHP, tanpa library tambahan.</p>
+    <pre>&lt;?php
+$base    = 'https://sppd.unkhair.ac.id';   <span class="c">// URL aplikasi SPPD</span>
+$apiKey  = 'API_KEY_ANDA';                 <span class="c">// minta ke UPT TIK</span>
+$tanggal = date('Y-m-d');                  <span class="c">// tanggal absensi</span>
+
+$ch = curl_init($base . '/api/dinas?tanggal=' . $tanggal);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER     => ['X-API-KEY: ' . $apiKey],
+]);
+$response = curl_exec($ch);
+$http     = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+if ($http === 200) {
+    $hasil = json_decode($response, true);
+    foreach ($hasil['data'] as $row) {
+        <span class="c">// di SIMPEG: tandai NIP ini sebagai "Dinas", bukan Alpha</span>
+        echo $row['nip'] . ' - ' . $row['nama'] . ' (' . $row['jenis'] . ")\n";
+    }
+} else {
+    echo "Gagal akses API (HTTP $http): " . $response;
+}</pre>
+
+    <p class="note">Untuk Laravel bisa memakai <code>Http::withHeaders(['X-API-KEY' =&gt; $apiKey])-&gt;get(...)</code>.</p>
+
     <h2>Kode status</h2>
     <table>
         <tr><td><code>200</code></td><td>Permintaan berhasil</td></tr>
