@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Panduan penggunaan API (publik, tanpa API key)
+Route::get('/dinas/panduan', [App\Http\Controllers\Api\DinasController::class, 'panduan'])->name('api.dinas.panduan');
+
 Route::group(['middleware' => 'verifyApiKey'], function () {
     Route::controller(App\Http\Controllers\Api\SpdController::class)->group(function () {
         Route::post('/sppd', 'index')->name('api.sppd.index');
