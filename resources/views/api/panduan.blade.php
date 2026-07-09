@@ -99,8 +99,8 @@ GET /api/dinas?tanggal=2025-08-24&jenis=luar</pre>
         </table>
         <div class="note">Wajib mengirim minimal salah satu: <code>nip</code> atau <code>nomor</code>.</div>
         <pre><span class="c"># Contoh</span>
-GET /api/dinas/cari?nip=197401052001121001&tahun=2025
-GET /api/dinas/cari?nomor=209/UN44/OT.02/2025</pre>
+GET /api/dinas/cari?nip=199001011999031001&tahun=2025
+GET /api/dinas/cari?nomor=0123/UN44/OT.00/2025</pre>
     </section>
 
     <section>
@@ -110,10 +110,10 @@ GET /api/dinas/cari?nomor=209/UN44/OT.02/2025</pre>
   <span class="c">"jumlah"</span>: 112,
   <span class="c">"data"</span>: [
     {
-      <span class="c">"nip"</span>: "197401052001121001",
-      <span class="c">"nama"</span>: "Abdul Kadir Kamaluddin, SP., M.Si",
-      <span class="c">"nomor_std"</span>: "1146/UN44/RT.11/2025",
-      <span class="c">"nomor_spd"</span>: "1146/UN44/RT.11/2025",
+      <span class="c">"nip"</span>: "199001011999031001",
+      <span class="c">"nama"</span>: "Budi Santoso, S.T., M.T.",
+      <span class="c">"nomor_std"</span>: "0123/UN44/RT.00/2025",
+      <span class="c">"nomor_spd"</span>: "0123/UN44/RT.00/2025",
       <span class="c">"kegiatan"</span>: "...",
       <span class="c">"tujuan"</span>: "Jakarta",
       <span class="c">"jenis"</span>: "luar_kota",
