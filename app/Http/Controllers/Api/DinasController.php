@@ -27,9 +27,14 @@ class DinasController extends Controller
      */
     public function index(Request $request)
     {
-        // Akses tanpa parameter apa pun -> tampilkan panduan penggunaan API
+        // Akses tanpa parameter apa pun -> arahkan ke halaman panduan
         if (empty($request->query())) {
-            return $this->panduan();
+            return response()->json([
+                'status'  => true,
+                'message' => 'Kirim parameter "tanggal" atau "mulai" & "selesai". '
+                    . 'Panduan lengkap: ' . url('/api/dinas/panduan'),
+                'panduan' => url('/api/dinas/panduan'),
+            ]);
         }
 
         $validator = Validator::make($request->all(), [
@@ -173,79 +178,11 @@ class DinasController extends Controller
     }
 
     /**
-     * Panduan penggunaan API.
-     * Ditampilkan saat GET /api/dinas tanpa parameter, dan dapat diakses
-     * publik (tanpa API key) melalui GET /api/dinas/panduan.
+     * Halaman panduan penggunaan API (HTML).
+     * Dapat diakses publik tanpa API key melalui GET /api/dinas/panduan.
      */
     public function panduan()
     {
-        return response()->json([
-            'status'         => true,
-            'aplikasi'       => 'API SPPD UNKHAIR',
-            'versi'          => '1.0',
-            'deskripsi'      => 'API data pegawai yang sedang melaksanakan tugas dinas '
-                . '(luar kota & dalam kota) untuk kebutuhan integrasi absensi SIMPEG.',
-            'panduan_publik' => 'GET /api/dinas/panduan (dapat diakses tanpa API key)',
-            'autentikasi' => [
-                'tipe'    => 'API Key',
-                'header'  => 'X-API-KEY: {api_key}',
-                'catatan' => 'Setiap request WAJIB menyertakan header X-API-KEY. '
-                    . 'Tanpa header atau key salah akan mendapat HTTP 401.',
-            ],
-            'endpoint' => [
-                [
-                    'nama'      => 'Daftar pegawai sedang tugas dinas (untuk rekap absensi)',
-                    'method'    => 'GET',
-                    'url'       => '/api/dinas',
-                    'parameter' => [
-                        'tanggal' => 'YYYY-MM-DD — cek harian (pilih ini ATAU mulai+selesai)',
-                        'mulai'   => 'YYYY-MM-DD — awal rentang (wajib berpasangan dengan selesai)',
-                        'selesai' => 'YYYY-MM-DD — akhir rentang',
-                        'nip'     => '(opsional) filter satu pegawai',
-                        'jenis'   => '(opsional) luar | dalam',
-                    ],
-                    'contoh' => [
-                        '/api/dinas?tanggal=2025-08-24',
-                        '/api/dinas?mulai=2025-08-01&selesai=2025-08-31',
-                        '/api/dinas?tanggal=2025-08-24&jenis=luar',
-                    ],
-                ],
-                [
-                    'nama'      => 'Pencarian surat tugas',
-                    'method'    => 'GET',
-                    'url'       => '/api/dinas/cari',
-                    'parameter' => [
-                        'nip'   => 'cari semua surat tugas milik NIP tersebut',
-                        'nomor' => 'cari berdasarkan nomor_std ATAU nomor_spd',
-                        'tahun' => '(opsional) YYYY',
-                    ],
-                    'catatan' => 'Wajib mengirim minimal salah satu: nip atau nomor.',
-                    'contoh'  => [
-                        '/api/dinas/cari?nip=197401052001121001&tahun=2025',
-                        '/api/dinas/cari?nomor=209/UN44/OT.02/2025',
-                    ],
-                ],
-            ],
-            'format_response' => [
-                'status' => 'boolean',
-                'jumlah' => 'total baris data',
-                'data'   => [
-                    'nip', 'nama', 'nomor_std', 'nomor_spd', 'kegiatan',
-                    'tujuan (null bila dinas dalam kota)',
-                    'jenis (luar_kota | dalam_kota)',
-                    'tanggal_mulai', 'tanggal_selesai', 'status',
-                ],
-            ],
-            'kode_status' => [
-                '200' => 'OK — permintaan berhasil',
-                '401' => 'API key tidak valid / tidak dikirim',
-                '422' => 'Parameter tidak valid atau kurang',
-            ],
-            'catatan' => [
-                'Pencocokan pegawai di sisi SIMPEG menggunakan NIP.',
-                'Hanya surat berstatus terverifikasi (disetujui) yang ditampilkan.',
-                'Data mencakup dinas luar kota (dari SPD) dan dalam kota sekaligus.',
-            ],
-        ]);
+        return response()->view('api.panduan');
     }
 }
