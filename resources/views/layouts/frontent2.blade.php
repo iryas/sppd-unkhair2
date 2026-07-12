@@ -362,7 +362,7 @@
 
         <!-- Modal Hasil Verifikasi -->
         <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header" style="background:#012970;color:#fff;">
                         <h5 class="modal-title"><i class="bi bi-patch-check-fill"></i> Surat Terverifikasi</h5>
