@@ -15,18 +15,29 @@ class DashboardController extends Controller
     public function index()
     {
         $tahun = tahun();
-        $jml_pegawai = Pegawai::all()->count();
-        $jml_departemen = Departemen::departemen(NULL)->get()->count();
-        $jml_sppd = SuratPerjalananDinas::tahun($tahun)->status_spd(['200'])->get()->count();
-        $jml_stugas = SuratTugasDinas::tahun($tahun)->status_std(['200'])->get()->count();
 
-        $data = [
-            'jml_pegawai' => $jml_pegawai,
-            'jml_departemen' => $jml_departemen,
-            'jml_sppd' => $jml_sppd,
-            'jml_stugas' => $jml_stugas,
-            'tahun' => $tahun
-        ];
+        // fokus pencairan SPPD yang sudah disetujui (status 200)
+        $base = fn () => SuratPerjalananDinas::tahun($tahun)->where('status_spd', 200);
+        $belumScope = fn ($q) => $q->where(function ($w) {
+            $w->whereNull('nilai_pencairan')->orWhere('nilai_pencairan', 0);
+        });
+
+        $kw_belum = $base()->where($belumScope)->count();
+        $kw_sudah = $base()->where('nilai_pencairan', '>', 0)->count();
+        $kw_total = (float) $base()->sum('nilai_pencairan');
+
+        $bulanan = $base()->where('nilai_pencairan', '>', 0)
+            ->selectRaw('MONTH(created_at) as bln, SUM(nilai_pencairan) as total')
+            ->groupBy('bln')->pluck('total', 'bln')->toArray();
+        $kw_bulanan = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $kw_bulanan[$m] = (float) ($bulanan[$m] ?? 0);
+        }
+
+        $kw_antrian = $base()->with('pegawai')->where($belumScope)
+            ->orderBy('created_at', 'asc')->limit(8)->get();
+
+        $data = compact('tahun', 'kw_belum', 'kw_sudah', 'kw_total', 'kw_bulanan', 'kw_antrian');
 
         return view('backend.keuangan.dashboard', $data);
     }
