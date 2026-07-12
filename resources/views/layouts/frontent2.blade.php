@@ -115,7 +115,8 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('frontend.verifikasi-cari') }}" method="GET" class="mt-3">
+                            <form id="form-verifikasi" action="{{ route('frontend.verifikasi-cari') }}" method="GET"
+                                data-url="{{ route('frontend.verifikasi-cek') }}" class="mt-3">
                                 <div class="input-group input-group-lg shadow-sm mx-auto" style="max-width:560px;">
                                     <input type="text" name="nomor" class="form-control"
                                         placeholder="Contoh: 01/UN44/KS.04/2026" value="{{ request('nomor') }}" required>
@@ -359,6 +360,36 @@
 
         </main>
 
+        <!-- Modal Hasil Verifikasi -->
+        <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#012970;color:#fff;">
+                        <h5 class="modal-title"><i class="bi bi-patch-check-fill"></i> Surat Terverifikasi</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-sm align-middle mb-0">
+                            <tr><th style="width:38%">Jenis</th><td id="v-jenis">-</td></tr>
+                            <tr><th>Nomor Surat</th><td id="v-nomor">-</td></tr>
+                            <tr><th>Nama Pegawai</th><td id="v-pegawai">-</td></tr>
+                            <tr><th>Kegiatan</th><td id="v-kegiatan">-</td></tr>
+                            <tr><th>Tujuan</th><td id="v-tujuan">-</td></tr>
+                            <tr><th>Tanggal</th><td id="v-tanggal">-</td></tr>
+                            <tr><th>Unit / Departemen</th><td id="v-departemen">-</td></tr>
+                        </table>
+                        <div class="alert alert-success mt-3 mb-0">
+                            <i class="bi bi-shield-check"></i> Surat ini terdaftar dan sudah terverifikasi.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer id="footer" class="footer">
 
             <div class="container">
@@ -414,6 +445,57 @@
 
         <!-- Main JS File -->
         <script src="{{ asset('flexstart') }}/js/main.js"></script>
+
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('form-verifikasi');
+                if (!form) return;
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const input = form.querySelector('input[name="nomor"]');
+                    const nomor = input.value.trim();
+                    if (!nomor) return;
+
+                    const btn = form.querySelector('button[type="submit"]');
+                    const original = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memeriksa...';
+
+                    fetch(form.dataset.url + '?nomor=' + encodeURIComponent(nomor), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d.status) {
+                            document.getElementById('v-jenis').textContent = d.jenis;
+                            document.getElementById('v-nomor').textContent = d.nomor;
+                            document.getElementById('v-pegawai').textContent = (d.pegawai || []).join(', ') || '-';
+                            document.getElementById('v-kegiatan').textContent = d.kegiatan || '-';
+                            document.getElementById('v-tujuan').textContent = d.tujuan || '-';
+                            document.getElementById('v-tanggal').textContent = d.tanggal || '-';
+                            document.getElementById('v-departemen').textContent = d.departemen || '-';
+                            new bootstrap.Modal(document.getElementById('modalVerifikasi')).show();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Tidak Ditemukan',
+                                text: d.message || 'Surat tidak ditemukan atau belum terverifikasi.'
+                            });
+                        }
+                    })
+                    .catch(function () {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan saat memeriksa surat.' });
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.innerHTML = original;
+                    });
+                });
+            });
+        </script>
 
     </body>
 

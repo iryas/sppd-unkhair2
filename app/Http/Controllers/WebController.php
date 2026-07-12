@@ -170,4 +170,53 @@ class WebController extends Controller
             ->with('verif_error', 'Surat dengan nomor "' . $nomor . '" tidak ditemukan atau belum terverifikasi.')
             ->withFragment('verifikasi');
     }
+
+    /**
+     * Versi AJAX dari verifikasi surat: kembalikan JSON untuk ditampilkan
+     * di modal (jika ketemu) atau SweetAlert (jika tidak ketemu).
+     */
+    public function verifikasi_cek(Request $request)
+    {
+        $nomor = trim((string) $request->query('nomor'));
+        $fmt = fn ($d) => $d ? \Carbon\Carbon::parse($d)->format('d-m-Y') : '-';
+
+        if ($nomor === '') {
+            return response()->json(['status' => false, 'message' => 'Silakan masukkan nomor surat terlebih dahulu.']);
+        }
+
+        $spd = SuratPerjalananDinas::with(['pegawai', 'departemen'])
+            ->where('nomor_spd', $nomor)->where('status_spd', 200)->first();
+        if ($spd) {
+            return response()->json([
+                'status'     => true,
+                'jenis'      => 'SPPD (Perjalanan Dinas)',
+                'nomor'      => $spd->nomor_spd,
+                'pegawai'    => [optional($spd->pegawai)->nama_pegawai ?? '-'],
+                'kegiatan'   => $spd->kegiatan_spd ?: '-',
+                'tujuan'     => $spd->tujuan ?: '-',
+                'tanggal'    => $fmt($spd->tanggal_berangakat) . ' s/d ' . $fmt($spd->tanggal_kembali),
+                'departemen' => optional($spd->departemen)->departemen ?? '-',
+            ]);
+        }
+
+        $std = SuratTugasDinas::with(['pegawai', 'departemen'])
+            ->where('nomor_std', $nomor)->where('status_std', 200)->first();
+        if ($std) {
+            return response()->json([
+                'status'     => true,
+                'jenis'      => $std->std_dk ? 'STD (Dinas Dalam Kota)' : 'STD (Surat Tugas)',
+                'nomor'      => $std->nomor_std,
+                'pegawai'    => $std->pegawai->pluck('nama_pegawai')->toArray() ?: ['-'],
+                'kegiatan'   => $std->kegiatan_std ?: '-',
+                'tujuan'     => '-',
+                'tanggal'    => $fmt($std->tanggal_mulai_tugas) . ' s/d ' . $fmt($std->tanggal_selesai_tugas),
+                'departemen' => optional($std->departemen)->departemen ?? '-',
+            ]);
+        }
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Surat dengan nomor "' . $nomor . '" tidak ditemukan atau belum terverifikasi.',
+        ]);
+    }
 }

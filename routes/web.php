@@ -20,6 +20,7 @@ Route::controller(App\Http\Controllers\WebController::class)->group(function () 
     Route::get('/verifikasi-sppd/{params}', 'verifikasi_spd')->name('frontend.verifikasi-sppd');
     Route::get('/verifikasi-std/{params}', 'verifikasi_std')->name('frontend.verifikasi-std');
     Route::get('/verifikasi-cari', 'verifikasi_cari')->name('frontend.verifikasi-cari');
+    Route::get('/verifikasi-cek', 'verifikasi_cek')->name('frontend.verifikasi-cek');
 });
 
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
