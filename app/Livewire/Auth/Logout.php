@@ -34,8 +34,6 @@ class Logout extends Component
         Auth::logout();
         Cache::flush();
 
-        // alert()->success('Success', 'Anda telah logout dari sistem!');
-        flash('success', 'Anda telah logout dari sistem!');
         return $this->redirect(route('frontend.site'));
     }
 }
