@@ -61,9 +61,38 @@ class DashboardController extends Controller
             return view('backend.admin.dashboard-ppk', $data);
         } elseif (auth()->user()->hasRole('admin-spd') && session('role') === 'admin-spd') {
             return view('backend.admin.dashboard-spd', $this->dataDashboardSpd($tahun));
+        } elseif (auth()->user()->hasRole('admin-st') && in_array(session('role'), ['admin-st', 'admin-st-dk'])) {
+            return view('backend.admin.dashboard-std', $this->dataDashboardStd($tahun));
         } else {
             return view('backend.admin.dashboard', $data);
         }
+    }
+
+    /**
+     * Data khusus dashboard role Admin ST: ringkasan status STD tahun berjalan,
+     * tren bulanan, dan daftar STD terakhir. Fokus actionable: "Belum Lengkap"
+     * (STD hasil SPPD yang perlu dilengkapi) dan "Belum Diverifikasi".
+     */
+    private function dataDashboardStd($tahun)
+    {
+        $std_terbit       = SuratTugasDinas::tahun($tahun)->whereIn('status_std', [102, 200, 206, 406, 409])->count();
+        $std_verified     = SuratTugasDinas::tahun($tahun)->where('status_std', 200)->count();
+        $std_belumlengkap = SuratTugasDinas::tahun($tahun)->where('status_std', 206)->count();
+        $std_belumverif   = SuratTugasDinas::tahun($tahun)->where('status_std', 102)->count();
+
+        $bulanan = SuratTugasDinas::tahun($tahun)->where('status_std', 200)
+            ->selectRaw('MONTH(created_at) as bln, COUNT(*) as jml')
+            ->groupBy('bln')->pluck('jml', 'bln')->toArray();
+        $std_bulanan = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $std_bulanan[$m] = (int) ($bulanan[$m] ?? 0);
+        }
+
+        $std_terakhir = SuratTugasDinas::with('pegawai')->tahun($tahun)
+            ->whereIn('status_std', [102, 200, 206, 406, 409])
+            ->orderBy('created_at', 'desc')->limit(8)->get();
+
+        return compact('tahun', 'std_terbit', 'std_verified', 'std_belumlengkap', 'std_belumverif', 'std_bulanan', 'std_terakhir');
     }
 
     /**
