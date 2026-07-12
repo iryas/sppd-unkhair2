@@ -37,6 +37,7 @@ Livewire::setScriptRoute(function ($handle) {
 
 
 Route::get('/login', App\Livewire\Auth\Login::class)->name('auth.login');
+Route::post('/login-modal', [App\Http\Controllers\LoginController::class, 'login'])->name('auth.login-modal');
 
 Route::group(['middleware' => 'isLogin'], function () {
 

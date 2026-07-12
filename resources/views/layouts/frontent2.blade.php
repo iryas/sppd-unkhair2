@@ -64,7 +64,8 @@
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
-                <a class="btn-getstarted flex-md-shrink-0" href="{{ route('auth.login') }}">Login</a>
+                <a class="btn-getstarted flex-md-shrink-0" href="#" data-bs-toggle="modal"
+                    data-bs-target="#modalLogin">Login</a>
             </div>
         </header>
 
@@ -82,7 +83,8 @@
                                 secara digital &mdash; cepat, rapi, dan surat bisa diverifikasi keasliannya.
                             </p>
                             <div class="d-flex flex-column flex-md-row" data-aos="fade-up" data-aos-delay="200">
-                                <a href="{{ route('auth.login') }}" class="btn btn-lg btn-success mr-2">Login <i
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalLogin"
+                                    class="btn btn-lg btn-success mr-2">Login <i
                                         class="bi bi-arrow-right"></i></a> &nbsp;&nbsp;
                                 <a href="#verifikasi"
                                     class="btn btn-lg btn-outline-primary mt-3 mt-md-0"><i class="bi bi-shield-check"></i>
@@ -360,6 +362,46 @@
 
         </main>
 
+        <!-- Modal Login -->
+        <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#012970;color:#fff;">
+                        <h5 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Login</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted mb-3">Masuk untuk memulai sesi Anda.</p>
+                        <div id="login-alert" class="alert alert-danger d-none"></div>
+                        <form id="form-login" action="{{ route('auth.login-modal') }}">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" name="username" class="form-control"
+                                    placeholder="Masukkan identitas anda" required autocomplete="username">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" placeholder="Password"
+                                    required autocomplete="current-password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tahun</label>
+                                <select name="tahun" class="form-select" required>
+                                    <option value="">-- Pilih Tahun --</option>
+                                    @for ($i = date('Y'); $i >= 2024; $i--)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Hasil Verifikasi -->
         <div class="modal fade" id="modalVerifikasi" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -414,7 +456,7 @@
                         <ul class="list-unstyled">
                             <li><a href="#hero">Beranda</a></li>
                             <li><a href="#verifikasi">Verifikasi Surat</a></li>
-                            <li><a href="{{ route('auth.login') }}">Login</a></li>
+                            <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalLogin">Login</a></li>
                         </ul>
                     </div>
                 </div>
@@ -494,6 +536,46 @@
                         btn.innerHTML = original;
                     });
                 });
+
+                const loginForm = document.getElementById('form-login');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const alertBox = document.getElementById('login-alert');
+                        alertBox.classList.add('d-none');
+                        const btn = loginForm.querySelector('button[type="submit"]');
+                        const original = btn.innerHTML;
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memproses...';
+
+                        fetch(loginForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            },
+                            body: new FormData(loginForm)
+                        })
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) {
+                            if (d.status) {
+                                window.location.href = d.redirect;
+                            } else {
+                                alertBox.textContent = d.message || 'Login gagal, silakan coba lagi.';
+                                alertBox.classList.remove('d-none');
+                                btn.disabled = false;
+                                btn.innerHTML = original;
+                            }
+                        })
+                        .catch(function () {
+                            alertBox.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+                            alertBox.classList.remove('d-none');
+                            btn.disabled = false;
+                            btn.innerHTML = original;
+                        });
+                    });
+                }
             });
         </script>
 
