@@ -367,7 +367,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header" style="background:#012970;color:#fff;">
-                        <h5 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Login</h5>
+                        <h5 class="modal-title" style="color:#fff;"><i class="bi bi-box-arrow-in-right"></i> Login</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
@@ -407,7 +407,7 @@
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header" style="background:#012970;color:#fff;">
-                        <h5 class="modal-title"><i class="bi bi-patch-check-fill"></i> Surat Terverifikasi</h5>
+                        <h5 class="modal-title" style="color:#fff;"><i class="bi bi-patch-check-fill"></i> Surat Terverifikasi</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
