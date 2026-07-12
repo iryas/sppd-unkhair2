@@ -27,7 +27,7 @@ class Logout extends Component
     {
         if (!Auth::check()) {
             flash('danger', 'Session telah berakhir, silahkan anda login!');
-            return $this->redirect(route('auth.login'));
+            return $this->redirect(route('frontend.site'));
         }
 
         session()->flush();
@@ -36,6 +36,6 @@ class Logout extends Component
 
         // alert()->success('Success', 'Anda telah logout dari sistem!');
         flash('success', 'Anda telah logout dari sistem!');
-        return $this->redirect(route('auth.login'));
+        return $this->redirect(route('frontend.site'));
     }
 }
