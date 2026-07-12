@@ -59,9 +59,37 @@ class DashboardController extends Controller
 
             $data = array_merge($data, $datatable);
             return view('backend.admin.dashboard-ppk', $data);
+        } elseif (auth()->user()->hasRole('admin-spd') && session('role') === 'admin-spd') {
+            return view('backend.admin.dashboard-spd', $this->dataDashboardSpd($tahun));
         } else {
             return view('backend.admin.dashboard', $data);
         }
+    }
+
+    /**
+     * Data khusus dashboard role Admin SPD: ringkasan status SPPD tahun berjalan,
+     * tren bulanan, dan daftar SPPD terakhir dibuat.
+     */
+    private function dataDashboardSpd($tahun)
+    {
+        $spd_diajukan   = SuratPerjalananDinas::tahun($tahun)->whereIn('status_spd', [102, 200, 406, 409])->count();
+        $spd_disetujui  = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 200)->count();
+        $spd_menunggu   = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 102)->count();
+        $spd_dibatalkan = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 409)->count();
+
+        $bulanan = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 200)
+            ->selectRaw('MONTH(created_at) as bln, COUNT(*) as jml')
+            ->groupBy('bln')->pluck('jml', 'bln')->toArray();
+        $spd_bulanan = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $spd_bulanan[$m] = (int) ($bulanan[$m] ?? 0);
+        }
+
+        $spd_terakhir = SuratPerjalananDinas::with('pegawai')->tahun($tahun)
+            ->whereIn('status_spd', [102, 200, 406, 409])
+            ->orderBy('created_at', 'desc')->limit(8)->get();
+
+        return compact('tahun', 'spd_diajukan', 'spd_disetujui', 'spd_menunggu', 'spd_dibatalkan', 'spd_bulanan', 'spd_terakhir');
     }
 
     public function get_statistik_usulan_departemen(Request $request)
