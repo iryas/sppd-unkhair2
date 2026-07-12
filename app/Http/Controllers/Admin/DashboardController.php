@@ -57,7 +57,7 @@ class DashboardController extends Controller
                 ]
             ];
 
-            $data = array_merge($data, $datatable);
+            $data = array_merge($data, $datatable, $this->dataDashboardPpk($tahun));
             return view('backend.admin.dashboard-ppk', $data);
         } elseif (auth()->user()->hasRole('admin-spd') && session('role') === 'admin-spd') {
             return view('backend.admin.dashboard-spd', $this->dataDashboardSpd($tahun));
@@ -93,6 +93,23 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')->limit(8)->get();
 
         return compact('tahun', 'std_terbit', 'std_verified', 'std_belumlengkap', 'std_belumverif', 'std_bulanan', 'std_terakhir');
+    }
+
+    /**
+     * Data khusus dashboard role PPK: ringkasan status SPPD tahun berjalan +
+     * antrian SPPD yang menunggu persetujuan (status 102).
+     */
+    private function dataDashboardPpk($tahun)
+    {
+        $ppk_menunggu   = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 102)->count();
+        $ppk_disetujui  = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 200)->count();
+        $ppk_dibatalkan = SuratPerjalananDinas::tahun($tahun)->where('status_spd', 409)->count();
+
+        $ppk_antrian = SuratPerjalananDinas::with('pegawai')->tahun($tahun)
+            ->where('status_spd', 102)
+            ->orderBy('created_at', 'asc')->limit(8)->get();
+
+        return compact('ppk_menunggu', 'ppk_disetujui', 'ppk_dibatalkan', 'ppk_antrian');
     }
 
     /**

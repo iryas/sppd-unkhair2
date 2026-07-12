@@ -29,71 +29,95 @@
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
                     <div class="col-lg-3 col-6">
-                        <!-- small box -->
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>{{ $jml_pegawai }}</h3>
-
-                                <p>PEGAWAI</p>
+                                <h3>{{ $ppk_menunggu }}</h3>
+                                <p>Menunggu Persetujuan</p>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-people"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <div class="icon"><i class="fas fa-inbox"></i></div>
+                            <a href="{{ route('admin.sppd.review') }}" class="small-box-footer">Review sekarang <i
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
                     <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>{{ $jml_departemen }}</h3>
-
-                                <p>Departemen/Unit</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-home"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-primary">
-                            <div class="inner">
-                                <h3>{{ $jml_sppd }}</h3>
-
-                                <p>SPPD {{ $tahun }}</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-paper-outline"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>{{ $jml_stugas }}</h3>
-
-                                <p>SURAT TUGAS {{ $tahun }}</p>
+                                <h3>{{ $ppk_disetujui }}</h3>
+                                <p>Disetujui {{ $tahun }}</p>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-paper-outline"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <div class="icon"><i class="fas fa-check-circle"></i></div>
+                            <a href="{{ route('admin.sppd.index') }}" class="small-box-footer">Lihat <i
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-secondary">
+                            <div class="inner">
+                                <h3>{{ $ppk_dibatalkan }}</h3>
+                                <p>Dibatalkan {{ $tahun }}</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-ban"></i></div>
+                            <a href="{{ route('admin.sppd.pembatalan') }}" class="small-box-footer">Lihat <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-primary">
+                            <div class="inner">
+                                <h3 style="font-size:1.7rem;"><i class="fas fa-clipboard-check"></i></h3>
+                                <p>Halaman Review SPPD</p>
+                            </div>
+                            <div class="icon"><i class="fas fa-tasks"></i></div>
+                            <a href="{{ route('admin.sppd.review') }}" class="small-box-footer">Buka Review <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.row -->
+
+                <!-- Antrian Review PPK -->
+                <div class="card card-outline card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-inbox"></i> SPPD Menunggu Persetujuan</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        @if ($ppk_antrian->count())
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Nomor</th>
+                                        <th>Pengusul</th>
+                                        <th>Kegiatan</th>
+                                        <th>Tujuan</th>
+                                        <th>Tgl</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($ppk_antrian as $row)
+                                        <tr>
+                                            <td class="text-primary">{{ $row->nomor_spd }}</td>
+                                            <td>{{ optional($row->pegawai)->nama_pegawai ?? '-' }}</td>
+                                            <td>{{ \Illuminate\Support\Str::limit($row->kegiatan_spd, 30) }}</td>
+                                            <td>{{ $row->tujuan ?? '-' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($row->created_at)->format('d/m/Y') }}</td>
+                                            <td class="text-right">
+                                                <a href="{{ route('admin.sppd.review') }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-search"></i> Review
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                                <p class="mb-0">Tidak ada antrian &mdash; semua usulan SPPD sudah direview.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
 
                 <div class="card">
                     <div class="card-body">
