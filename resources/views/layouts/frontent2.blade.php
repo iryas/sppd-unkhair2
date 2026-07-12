@@ -58,13 +58,13 @@
                 </a>
 
                 <nav id="navmenu" class="navmenu">
-                    {{-- <ul>
-                        <li><a href="#hero" class="active">Home<br></a></li>
-                        <li><a href="#contact">Kontak</a></li>
-                    </ul> --}}
+                    <ul>
+                        <li><a href="#hero" class="active">Beranda</a></li>
+                        <li><a href="#verifikasi">Verifikasi Surat</a></li>
+                    </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
-                {{-- <a class="btn-getstarted flex-md-shrink-0" href="{{ route('auth.login') }}">Login</a> --}}
+                <a class="btn-getstarted flex-md-shrink-0" href="{{ route('auth.login') }}">Login</a>
             </div>
         </header>
 
@@ -76,18 +76,17 @@
                 <div class="container">
                     <div class="row gy-4">
                         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
-                            <h1 data-aos="fade-up">Haii, Selamat Datang</h1>
+                            <h1 data-aos="fade-up">Selamat Datang</h1>
                             <p data-aos="fade-up" data-aos-delay="100">
-                                Di {{ $nama_sub_aplikasi }} {{ $nama_departemen }}
+                                Kelola Surat Perjalanan &amp; Tugas Dinas {{ $nama_departemen }}
+                                secara digital &mdash; cepat, rapi, dan surat bisa diverifikasi keasliannya.
                             </p>
                             <div class="d-flex flex-column flex-md-row" data-aos="fade-up" data-aos-delay="200">
                                 <a href="{{ route('auth.login') }}" class="btn btn-lg btn-success mr-2">Login <i
                                         class="bi bi-arrow-right"></i></a> &nbsp;&nbsp;
-                                <!--
-                                <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8"
-                                    class="glightbox btn-watch-video d-flex align-items-center justify-content-center ms-0 ms-md-4 mt-4 mt-md-0"><i
-                                        class="bi bi-play-circle"></i><span>Video Panduan</span></a>
-                                -->
+                                <a href="#verifikasi"
+                                    class="btn btn-lg btn-outline-primary mt-3 mt-md-0"><i class="bi bi-shield-check"></i>
+                                    Verifikasi Surat</a>
                             </div>
                         </div>
                         <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-out">
@@ -98,6 +97,37 @@
                 </div>
 
             </section><!-- /Hero Section -->
+
+            <!-- Verifikasi Section -->
+            <section id="verifikasi" class="section">
+                <div class="container" data-aos="fade-up">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center">
+                            <h2 style="color:#012970;font-weight:700;">Verifikasi Keaslian Surat</h2>
+                            <p class="text-muted">
+                                Masukkan nomor surat (SPPD/STD) atau scan QR pada dokumen
+                                untuk memastikan keasliannya.
+                            </p>
+
+                            @if (session('verif_error'))
+                                <div class="alert alert-warning d-inline-block mt-2">
+                                    <i class="bi bi-exclamation-triangle"></i> {{ session('verif_error') }}
+                                </div>
+                            @endif
+
+                            <form action="{{ route('frontend.verifikasi-cari') }}" method="GET" class="mt-3">
+                                <div class="input-group input-group-lg shadow-sm mx-auto" style="max-width:560px;">
+                                    <input type="text" name="nomor" class="form-control"
+                                        placeholder="Contoh: 01/UN44/KS.04/2026" value="{{ request('nomor') }}" required>
+                                    <button class="btn btn-primary px-4" type="submit">
+                                        <i class="bi bi-shield-check"></i> Verifikasi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section><!-- /Verifikasi Section -->
 
             {{-- 
             <!-- Recent Posts Section -->
@@ -331,14 +361,39 @@
 
         <footer id="footer" class="footer">
 
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ asset('images/' . $logo) }}" alt="" style="height:40px;margin-right:10px;">
+                            <span class="sitename" style="font-size:20px;font-weight:600;">{{ $nama_aplikasi }}</span>
+                        </div>
+                        <p class="mt-2">{{ $nama_sub_aplikasi }} &mdash; {{ $nama_departemen }}.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <h4>Kontak</h4>
+                        <p>
+                            <i class="bi bi-geo-alt"></i> {{ $alamat }}<br>
+                            <i class="bi bi-envelope"></i> {{ $email }}<br>
+                            <i class="bi bi-telephone"></i> {{ $telepon }}
+                        </p>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4>Tautan</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="#hero">Beranda</a></li>
+                            <li><a href="#verifikasi">Verifikasi Surat</a></li>
+                            <li><a href="{{ route('auth.login') }}">Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <div class="container text-center mt-4">
                 <p>
                     {{ date('Y') }} &copy; Copyright <strong><span>{{ $author }}</span></strong>.
                     {{ $nama_departemen }}
                 </p>
-                <div class="credits">
-                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                </div>
             </div>
 
         </footer>

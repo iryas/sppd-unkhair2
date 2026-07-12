@@ -6,6 +6,7 @@ use App\Models\Berkas;
 use App\Models\SuratPerjalananDinas;
 use App\Models\SuratTugasDinas;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class WebController extends Controller
@@ -137,5 +138,36 @@ class WebController extends Controller
             'get' => $get
         ];
         return view('detail-std', $data);
+    }
+
+    /**
+     * Verifikasi keaslian surat dari halaman depan berdasarkan nomor surat.
+     * Mencari di SPPD (nomor_spd) lalu STD (nomor_std) yang sudah terverifikasi.
+     */
+    public function verifikasi_cari(Request $request)
+    {
+        $nomor = trim((string) $request->query('nomor'));
+
+        if ($nomor === '') {
+            return redirect()->route('frontend.site')
+                ->with('verif_error', 'Silakan masukkan nomor surat terlebih dahulu.')
+                ->withFragment('verifikasi');
+        }
+
+        $spd = SuratPerjalananDinas::with(['pegawai', 'departemen', 'reviwer', 'user'])
+            ->where('nomor_spd', $nomor)->where('status_spd', 200)->first();
+        if ($spd) {
+            return view('detail-sppd', ['judul' => 'Data Pengajuan SPPD', 'get' => $spd]);
+        }
+
+        $std = SuratTugasDinas::with(['pegawai', 'departemen', 'reviwer', 'user'])
+            ->where('nomor_std', $nomor)->where('status_std', 200)->first();
+        if ($std) {
+            return view('detail-std', ['judul' => 'Data Pengajuan STD', 'get' => $std]);
+        }
+
+        return redirect()->route('frontend.site')
+            ->with('verif_error', 'Surat dengan nomor "' . $nomor . '" tidak ditemukan atau belum terverifikasi.')
+            ->withFragment('verifikasi');
     }
 }
