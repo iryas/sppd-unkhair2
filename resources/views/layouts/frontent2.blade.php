@@ -61,6 +61,7 @@
                     <ul>
                         <li><a href="#hero" class="active">Beranda</a></li>
                         <li><a href="#verifikasi">Verifikasi Surat</a></li>
+                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalTentang">Tentang</a></li>
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
@@ -362,6 +363,74 @@
 
         </main>
 
+        <!-- Modal Tentang Aplikasi -->
+        <div class="modal fade" id="modalTentang" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:#012970;color:#fff;">
+                        <h5 class="modal-title" style="color:#fff;"><i class="bi bi-info-circle"></i> Tentang Aplikasi
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <img src="{{ asset('images/' . $logo) }}" alt="" style="height:60px;">
+                            <h4 class="mt-2 mb-1" style="color:#012970;">{{ $nama_aplikasi }}</h4>
+                            <p class="text-muted mb-2">{{ $nama_sub_aplikasi }}</p>
+                            <span class="badge bg-primary" style="font-size:13px;">Versi {{ pengaturan('versi') }}</span>
+                        </div>
+                        <p class="text-center text-muted small px-md-4">
+                            Aplikasi pengelolaan Surat Perjalanan Dinas (SPPD) &amp; Surat Tugas Dinas (STD)
+                            di lingkungan {{ $nama_departemen }} &mdash; mulai dari pengajuan, review,
+                            penerbitan surat, hingga verifikasi keasliannya.
+                        </p>
+
+                        <hr>
+                        <h6 style="color:#012970;font-weight:600;"><i class="bi bi-clock-history"></i> Riwayat
+                            Pengembangan</h6>
+
+                        <ul class="list-unstyled mt-3 mb-0">
+                            <li class="mb-3">
+                                <span class="badge bg-primary">v1.3</span> <small class="text-muted">2026</small>
+                                <ul class="mt-1 mb-0">
+                                    <li>Integrasi API absensi dengan SIMPEG (data dinas pegawai).</li>
+                                    <li>Peningkatan keamanan: pembatasan percobaan login (rate limit).</li>
+                                    <li>Halaman depan baru: verifikasi surat &amp; login melalui modal.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-3">
+                                <span class="badge bg-secondary">v1.2</span> <small class="text-muted">2025</small>
+                                <ul class="mt-1 mb-0">
+                                    <li>Surat Tugas Dinas Dalam Kota.</li>
+                                    <li>Laporan dan ekspor data (Excel/PDF).</li>
+                                </ul>
+                            </li>
+                            <li class="mb-3">
+                                <span class="badge bg-secondary">v1.1</span> <small class="text-muted">2025</small>
+                                <ul class="mt-1 mb-0">
+                                    <li>Penomoran surat otomatis.</li>
+                                    <li>Verifikasi keaslian dokumen melalui QR Code.</li>
+                                </ul>
+                            </li>
+                            <li class="mb-0">
+                                <span class="badge bg-secondary">v1.0</span> <small class="text-muted">2024</small>
+                                <ul class="mt-1 mb-0">
+                                    <li>Rilis awal: pengajuan SPPD &amp; STD, review PPK, cetak PDF.</li>
+                                    <li>Manajemen pegawai, unit kerja, dan hak akses (role).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <small class="text-muted me-auto">Dikembangkan oleh {{ $author }} &mdash;
+                            {{ $nama_departemen }}</small>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Login -->
         <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -456,6 +525,7 @@
                         <ul class="list-unstyled">
                             <li><a href="#hero">Beranda</a></li>
                             <li><a href="#verifikasi">Verifikasi Surat</a></li>
+                            <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalTentang">Tentang Aplikasi</a></li>
                             <li><a href="#" data-bs-toggle="modal" data-bs-target="#modalLogin">Login</a></li>
                         </ul>
                     </div>
