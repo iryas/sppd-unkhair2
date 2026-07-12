@@ -119,35 +119,6 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center g-5">
-                            <div class="col-lg-3">
-                                <img src="{{ asset('images/dashboard.png') }}" class="img-fluid opacity-85" alt="images"
-                                    loading="lazy">
-                            </div>
-                            <div class="col-lg-9 px-xl-5">
-                                <h4 class="mb-2">
-                                    Selamat datang <b>{{ Auth::user()->name }}</b> di {{ $pengaturan['nama-sub-aplikasi'] }}
-                                    {{ $pengaturan['nama-departemen'] }}
-                                </h4>
-                                <p class="lead-dashboard mb-4">
-                                    {{ $pengaturan['nama-sub-aplikasi'] }}
-                                    merupakan sistem informasi yang dirancang khusus untuk mengelola data
-                                    <span title="Surat Perintah Perjalanan Dinas">SPPD</span>
-                                    dan <span title="Surat Tugas Dinas">STD</span>.
-                                    Sehingga Universitas Khairun dapat menyediakan layanan yang lebih efektif dan efisien.
-                                </p>
-                                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
-                                    <livewire:auth.logout tampilan="logout2" />
-                                    <livewire:auth.profile />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
                 <!-- statistik pengajuan sppd / std -->
                 <div class="row">
                     <div class="col-md-5">
