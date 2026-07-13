@@ -8,15 +8,15 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
-                <div class="row mb-2">
+                <div class="row mb-2 align-items-center">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Dashboard</h1>
+                        <h1 class="m-0">Dashboard <small class="text-muted">Kepegawaian</small></h1>
                     </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
+                    <div class="col-sm-6 text-sm-right">
+                        <a href="{{ route('kepegawaian.sppd.index') }}" class="btn btn-sm btn-primary"><i
+                                class="fas fa-file-alt"></i> Laporan SPPD</a>
+                        <a href="{{ route('kepegawaian.std.index') }}" class="btn btn-sm btn-success"><i
+                                class="fas fa-file-alt"></i> Laporan STD</a>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -29,100 +29,49 @@
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
                     <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h3>{{ $jml_pegawai }}</h3>
-
-                                <p>PEGAWAI</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-people"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>{{ $jml_departemen }}</h3>
-
-                                <p>Departemen/Unit</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-home"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
-                        <!-- small box -->
                         <div class="small-box bg-primary">
                             <div class="inner">
                                 <h3>{{ $jml_sppd }}</h3>
-
                                 <p>SPPD {{ $tahun }}</p>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-paper-outline"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <div class="icon"><i class="fas fa-plane-departure"></i></div>
+                            <a href="{{ route('kepegawaian.sppd.index') }}" class="small-box-footer">Lihat laporan <i
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
                     <div class="col-lg-3 col-6">
-                        <!-- small box -->
                         <div class="small-box bg-success">
                             <div class="inner">
                                 <h3>{{ $jml_stugas }}</h3>
-
-                                <p>SURAT TUGAS {{ $tahun }}</p>
+                                <p>Surat Tugas {{ $tahun }}</p>
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-ios-paper-outline"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i
+                            <div class="icon"><i class="fas fa-file-signature"></i></div>
+                            <a href="{{ route('kepegawaian.std.index') }}" class="small-box-footer">Lihat laporan <i
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
-                </div>
-                <!-- /.row -->
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center g-5">
-                            <div class="col-lg-3">
-                                <img src="{{ asset('images/dashboard.png') }}" class="img-fluid opacity-85" alt="images"
-                                    loading="lazy">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ $jml_pegawai }}</h3>
+                                <p>Pegawai</p>
                             </div>
-                            <div class="col-lg-9 px-xl-5">
-                                <h4 class="mb-2">
-                                    Selamat datang <b>{{ Auth::user()->name }}</b> di {{ $pengaturan['nama-sub-aplikasi'] }}
-                                    {{ $pengaturan['nama-departemen'] }}
-                                </h4>
-                                <p class="lead-dashboard mb-4">
-                                    {{ $pengaturan['nama-sub-aplikasi'] }}
-                                    merupakan sistem informasi yang dirancang khusus untuk mengelola data
-                                    <span title="Surat Perintah Perjalanan Dinas">SPPD</span>
-                                    dan <span title="Surat Tugas Dinas">STD</span>.
-                                    Sehingga Universitas Khairun dapat menyediakan layanan yang lebih efektif dan efisien.
-                                </p>
-                                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
-                                    <livewire:auth.logout tampilan="logout2" />
-                                    <livewire:auth.profile />
-                                </div>
+                            <div class="icon"><i class="fas fa-users"></i></div>
+                            <span class="small-box-footer">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $jml_departemen }}</h3>
+                                <p>Departemen/Unit</p>
                             </div>
+                            <div class="icon"><i class="fas fa-building"></i></div>
+                            <span class="small-box-footer">&nbsp;</span>
                         </div>
                     </div>
                 </div>
-
+                <!-- /.row -->
 
                 <!-- statistik pengajuan sppd / std -->
                 <div class="row">
