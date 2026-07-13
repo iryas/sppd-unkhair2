@@ -63,9 +63,40 @@ class DashboardController extends Controller
             return view('backend.admin.dashboard-spd', $this->dataDashboardSpd($tahun));
         } elseif (auth()->user()->hasRole('admin-st') && in_array(session('role'), ['admin-st', 'admin-st-dk'])) {
             return view('backend.admin.dashboard-std', $this->dataDashboardStd($tahun));
+        } elseif (auth()->user()->hasRole('review-st') && session('role') === 'review-st') {
+            return view('backend.admin.dashboard-review-st', $this->dataDashboardReviewSt($tahun));
         } else {
             return view('backend.admin.dashboard', $data);
         }
+    }
+
+    /**
+     * Data khusus dashboard role Review ST (Kabag Umum): antrian STD yang
+     * menunggu verifikasi, difilter ke pimpinan yang diwakili reviewer.
+     */
+    private function dataDashboardReviewSt($tahun)
+    {
+        $pimpinan = auth()->user()->pj_pimpinan()->first();
+        $pimpinan_id = $pimpinan ? $pimpinan->id : '-';
+        $rst_nama = $pimpinan ? $pimpinan->nama_pimpinan : auth()->user()->name;
+
+        $base = fn () => SuratTugasDinas::tahun($tahun)->where('pimpinan_id', $pimpinan_id);
+
+        $rst_menunggu = $base()->where('status_std', 102)->count();
+        $rst_verified = $base()->where('status_std', 200)->count();
+
+        $bulanan = $base()->where('status_std', 200)
+            ->selectRaw('MONTH(created_at) as bln, COUNT(*) as jml')
+            ->groupBy('bln')->pluck('jml', 'bln')->toArray();
+        $rst_bulanan = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $rst_bulanan[$m] = (int) ($bulanan[$m] ?? 0);
+        }
+
+        $rst_antrian = $base()->with('pegawai')->where('status_std', 102)
+            ->orderBy('created_at', 'asc')->limit(8)->get();
+
+        return compact('tahun', 'rst_nama', 'rst_menunggu', 'rst_verified', 'rst_bulanan', 'rst_antrian');
     }
 
     /**
