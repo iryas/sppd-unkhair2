@@ -17,8 +17,8 @@ class ChangeRoleController extends Controller
 
         alert()->success('Success', 'Sukses ganti peran, Selamat datang ' . auth()->user()->name);
 
-        if ($role == 'keuangan') {
-            return redirect(route('keuangan.dashboard'));
+        if (in_array($role, ['keuangan', 'kepegawaian'])) {
+            return redirect(route($role . '.dashboard'));
         }
 
         return redirect(route('admin.dashboard'));
