@@ -7,7 +7,8 @@ use App\Models\SuratTugasDinas;
 use Illuminate\Support\Facades\File;
 use PDF;
 //use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 class CetakController extends Controller
 {
@@ -35,11 +36,21 @@ class CetakController extends Controller
             // generate qrcode
             $file_path = public_path($qrcode_path) . $qrcode_name;
             $dt = route('frontend.verifikasi-sppd', encode_arr(['sppd_id' => $params['sppd_id']]));
-            QrCode::size(512)
+            /*QrCode::size(512)
                 ->format('png')
                 ->merge(public_path('images/logo.png'), 0.2, true)
                 ->errorCorrection('M')
                 ->generate($dt, $file_path);
+            */
+
+            $options = new QROptions([
+                'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
+                'imageBase64'  => true,  // return base64
+                'scale'        => 10,    // ukuran QR
+                'imageTransparent' => false,
+            ]);
+            $qrcode = new QRCode($options);
+            $qrcode->render($dt, $file_path);
 
             if (file_exists($file_path)) {
                 \Log::info('QR SPPD berhasil: ' . $file_path);
@@ -93,11 +104,21 @@ class CetakController extends Controller
             // generate qrcode
             $file_path = public_path($qrcode_path) . $qrcode_name;
             $dt = route('frontend.verifikasi-std', encode_arr(['stugas_id' => $params['stugas_id']]));
+            /*
             QrCode::size(512)
                 ->format('png')
                 ->merge(public_path('images/logo.png'), 0.2, true)
                 ->errorCorrection('M')
                 ->generate($dt, $file_path);
+            */
+            $options = new QROptions([
+                'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
+                'imageBase64'  => true,  // return base64
+                'scale'        => 10,    // ukuran QR
+                'imageTransparent' => false,
+            ]);
+            $qrcode = new QRCode($options);
+            $qrcode->render($dt, $file_path);
 
             if (file_exists($file_path)) {
                 \Log::info('QR STD berhasil: ' . $file_path);
