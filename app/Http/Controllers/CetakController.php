@@ -6,6 +6,7 @@ use App\Models\SuratPerjalananDinas;
 use App\Models\SuratTugasDinas;
 use Illuminate\Support\Facades\File;
 use PDF;
+//use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CetakController extends Controller
