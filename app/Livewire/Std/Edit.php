@@ -111,7 +111,7 @@ class Edit extends Component
         $this->kode_surat = trim($pecah[1]) . "/" . trim($pecah[2]) . "/" . trim($pecah[3]);
 
         $get = KodeSurat::where('kode', trim($pecah[2]))->first();
-        $kode = "UN44" . "/" . trim($pecah[2]);
+        $kode = "DST/UN44" . "/" . trim($pecah[2]);
         $tahun = trim($pecah[3]);
 
         $jenis_surat = 'st';
@@ -119,7 +119,7 @@ class Edit extends Component
             $jenis_surat = 'std-dk';
         }
 
-        $keterangan = auth()->user()->name . ' membuat STD ' . $get->keterangan;
+        $keterangan = auth()->user()->name . ' membuat STD ' . ($get?->keterangan ?? '');
         $this->riwayat_nomor_surat = [
             'nomor' => $this->nomor_surat,
             'kode' => $kode,

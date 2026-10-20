@@ -94,13 +94,13 @@ class LengkapiStd extends Component
     {
         $pecah = explode("/", $nomor_std);
         $this->nomor_surat = trim($pecah[0]);
-        $this->kode_surat = trim($pecah[1]) . "/" . trim($pecah[2]) . "/" . trim($pecah[3]);
+        $this->kode_surat = trim($pecah[1]) . "/" . trim($pecah[2]) . "/" . trim($pecah[3]) . "/" . trim($pecah[4]);
 
-        $get = KodeSurat::where('kode', trim($pecah[2]))->first();
-        $kode = "UN44" . "/" . trim($pecah[2]);
+        $get = KodeSurat::where('kode', trim($pecah[3]))->first();
+        $kode = "DST/UN44" . "/" . trim($pecah[2]);
         $tahun = trim($pecah[3]);
         $jenis_surat = 'st';
-        $keterangan = auth()->user()->name . ' membuat STD ' . $get->keterangan;
+        $keterangan = auth()->user()->name . ' membuat STD ' . ($get?->keterangan ?? '');
         $this->riwayat_nomor_surat = [
             'nomor' => $this->nomor_surat,
             'kode' => $kode,

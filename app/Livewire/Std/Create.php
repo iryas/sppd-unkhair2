@@ -81,10 +81,10 @@ class Create extends Component
         $get = KodeSurat::where('id', $kodesurat_id)->first();
 
         $this->nomor_surat = '01';
-        $kode = "UN44" . "/" . $get->kode;
+        $kode = "DST/UN44" . "/" . $get->kode;
         $tahun = date('Y');
         $jenis_surat = 'std-dk';
-        $keterangan = auth()->user()->name . ' membuat surat ' . $get->keterangan;
+        $keterangan = auth()->user()->name . ' membuat surat ' . ($get?->keterangan ?? '');
 
         // $riwayat = RiwayatNomorSurat::kode($kode)->tahun($tahun)->jenis($jenis_surat)->orderBy('nomor', 'DESC')->limit(1)->first();
         $riwayat = RiwayatNomorSurat::tahun($tahun)->jenis($jenis_surat)->orderBy('nomor', 'DESC')->limit(1)->first();
