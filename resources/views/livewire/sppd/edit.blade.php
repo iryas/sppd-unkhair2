@@ -10,7 +10,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label for="judul_konten">
                                     Nomor SPPD<sup class="text-danger">*</sup> :
                                 </label>
@@ -45,7 +45,7 @@
                                     @enderror
                                 @endif
                             </div>
-                            <div class="col-sm-6"></div>
+                            <div class="col-sm-3"></div>
                             <div class="col-sm-3">
                                 <label for="judul_konten">
                                     Tanggal SPPD<sup class="text-danger">*</sup> :
