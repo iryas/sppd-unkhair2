@@ -165,8 +165,8 @@ class Edit extends Component
 
                 // pecah nomor_std
                 $pecah_std = explode("/", $nomor_std);
-                // simpan nomor_std dengan format nomor/UN44/kode_surat/tahun
-                $nomor_std = $pecah_spd[0] . "/" . trim($pecah_std[1]) . "/" . trim($pecah_std[2]) . "/" . trim($pecah_std[3]);
+                // ganti nomor urut (segmen pertama) dgn nomor dari SPPD, sisanya (DST/UN44/kode/tahun) tetap
+                $nomor_std = $pecah_spd[0] . "/" . implode("/", array_map('trim', array_slice($pecah_std, 1)));
             }
 
             $std->update([

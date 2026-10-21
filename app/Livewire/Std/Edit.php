@@ -115,7 +115,7 @@ class Edit extends Component
         $tahun = trim($pecah[$n - 1]);
 
         $get = KodeSurat::where('kode', $kode_surat)->first();
-        $kode = "UN44" . "/" . $kode_surat;
+        $kode = "DST/UN44" . "/" . $kode_surat;
 
         $jenis_surat = 'st';
         if ($this->std_dk) {
