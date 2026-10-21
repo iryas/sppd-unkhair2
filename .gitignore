@@ -17,3 +17,7 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
+
+# QR code hasil generate (jangan masuk repo)
+/public/images/qrcode/*
+!/public/images/qrcode/.gitkeep
