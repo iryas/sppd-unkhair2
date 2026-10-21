@@ -117,9 +117,12 @@ class ReviewSppd extends Component
         $pecah = explode("/", $nomor_spd);
 
         // $nomor = '01';
+        // parse dari belakang biar handle SPPD format lama (4 seg) & baru DST (5 seg)
+        $n = count($pecah);
         $nomor = trim($pecah[0]);
-        $kode = trim($pecah[1]) . "/" . trim($pecah[2]);
-        $tahun = trim($pecah[3]);
+        $kode_surat = trim($pecah[$n - 2]);
+        $tahun = trim($pecah[$n - 1]);
+        $kode = "UN44" . "/" . $kode_surat; // STD tetap tanpa DST
         $jenis_surat = 'st';
         $keterangan = auth()->user()->name . ', PPK auto dibuatkan STD setelah menyetujui usulan SPPD ' . $nomor_spd;
 

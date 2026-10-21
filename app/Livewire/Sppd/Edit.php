@@ -80,12 +80,16 @@ class Edit extends Component
     public function pecah_nomor_spd($nomor_spd)
     {
         $pecah = explode("/", $nomor_spd);
+        $n = count($pecah);
+        // parse dari belakang: tahun = segmen terakhir, kode = sebelum tahun
+        // (robust untuk format lama 4-segmen maupun baru 5-segmen dengan DST)
         $this->nomor_surat = trim($pecah[0]);
-        $this->kode_surat = trim($pecah[1]) . "/" . trim($pecah[2]) . "/" . trim($pecah[3]);
+        $this->kode_surat = implode("/", array_map('trim', array_slice($pecah, 1)));
+        $kode_surat = trim($pecah[$n - 2]);
+        $tahun = trim($pecah[$n - 1]);
 
-        $get = KodeSurat::where('kode', trim($pecah[2]))->first();
-        $kode = "DST/UN44" . "/" . trim($pecah[2]);
-        $tahun = trim($pecah[3]);
+        $get = KodeSurat::where('kode', $kode_surat)->first();
+        $kode = "DST/UN44" . "/" . $kode_surat;
         $jenis_surat = 'spd';
         $keterangan = auth()->user()->name . ' membuat SPPD ' . ($get?->keterangan ?? '');
         $this->riwayat_nomor_surat = [
