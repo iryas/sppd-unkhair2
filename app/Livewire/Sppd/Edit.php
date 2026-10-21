@@ -79,17 +79,14 @@ class Edit extends Component
 
     public function pecah_nomor_spd($nomor_spd)
     {
-        $pecah = explode("/", $nomor_spd);
-        $n = count($pecah);
-        // parse dari belakang: tahun = segmen terakhir, kode = sebelum tahun
-        // (robust untuk format lama 4-segmen maupun baru 5-segmen dengan DST)
-        $this->nomor_surat = trim($pecah[0]);
-        $this->kode_surat = implode("/", array_map('trim', array_slice($pecah, 1)));
-        $kode_surat = trim($pecah[$n - 2]);
-        $tahun = trim($pecah[$n - 1]);
+        $parse = nomor_surat_parse($nomor_spd);
+        $this->nomor_surat = $parse['nomor'];
+        $this->kode_surat = $parse['kode_surat'];
+        $kode_surat = $parse['kode'];
+        $tahun = $parse['tahun'];
 
         $get = KodeSurat::where('kode', $kode_surat)->first();
-        $kode = "DST/UN44" . "/" . $kode_surat;
+        $kode = surat_kode($kode_surat);
         $jenis_surat = 'spd';
         $keterangan = auth()->user()->name . ' membuat SPPD ' . ($get?->keterangan ?? '');
         $this->riwayat_nomor_surat = [
@@ -158,15 +155,11 @@ class Edit extends Component
 
             $nomor_std = $std->nomor_std;
 
-            // jika ada perubahan nomor_spd maka nomor_std juga berubah
+            // jika ada perubahan nomor_spd maka nomor_std juga berubah (ikut nomor urut SPPD)
             if ($this->nomor_spd != $this->nomor_spd_old) {
-                // pecah normor_spd untuk ambil nomor urut surat
-                $pecah_spd = explode("/", $this->nomor_spd);
-
-                // pecah nomor_std
-                $pecah_std = explode("/", $nomor_std);
-                // ganti nomor urut (segmen pertama) dgn nomor dari SPPD, sisanya (DST/UN44/kode/tahun) tetap
-                $nomor_std = $pecah_spd[0] . "/" . implode("/", array_map('trim', array_slice($pecah_std, 1)));
+                $nomor_baru = nomor_surat_parse($this->nomor_spd)['nomor'];
+                $std_parse = nomor_surat_parse($nomor_std);
+                $nomor_std = nomor_surat_build($nomor_baru, $std_parse['kode'], $std_parse['tahun']);
             }
 
             $std->update([

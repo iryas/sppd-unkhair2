@@ -81,7 +81,7 @@ class Create extends Component
         $get = KodeSurat::where('id', $kodesurat_id)->first();
 
         $this->nomor_surat = '01';
-        $kode = "DST/UN44" . "/" . $get->kode;
+        $kode = surat_kode($get->kode);
         $tahun = date('Y');
         $jenis_surat = 'std-dk';
         $keterangan = auth()->user()->name . ' membuat surat ' . ($get?->keterangan ?? '');
@@ -102,7 +102,7 @@ class Create extends Component
         ];
 
         $this->kode_surat = $kode . "/" . $tahun;
-        $this->nomor_std = $this->nomor_surat . "/" . $kode . "/" . $tahun;
+        $this->nomor_std = nomor_surat_build($this->nomor_surat, $get->kode, $tahun);
 
         $this->readonly = "";
         $this->close_modal_daftar_surat();

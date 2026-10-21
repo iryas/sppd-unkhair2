@@ -282,3 +282,48 @@ if (!function_exists('rupiah')) {
         return (strlen($nilai) > 1) ? number_format($nilai, 0, ',', '.') : $nilai;
     }
 }
+
+if (!function_exists('surat_kode')) {
+    /**
+     * Bagian kode pada nomor surat: {prefix}/{instansi}/{kode_surat}
+     * contoh: DST/UN44/HM.04  (format diatur di config/surat.php)
+     */
+    function surat_kode($kode_surat)
+    {
+        $instansi = config('surat.instansi');
+        $prefix = config('surat.prefix');
+        $awalan = $prefix ? $prefix . '/' : '';
+        return $awalan . $instansi . '/' . trim($kode_surat);
+    }
+}
+
+if (!function_exists('nomor_surat_build')) {
+    /**
+     * Susun nomor surat lengkap:
+     *   {nomor}/{prefix}/{instansi}/{kode_surat}/{tahun}
+     *   contoh: 1549/DST/UN44/HM.04/2026
+     */
+    function nomor_surat_build($nomor, $kode_surat, $tahun)
+    {
+        return trim($nomor) . '/' . surat_kode($kode_surat) . '/' . trim($tahun);
+    }
+}
+
+if (!function_exists('nomor_surat_parse')) {
+    /**
+     * Pecah nomor surat (robust: baca dari belakang). Mengembalikan:
+     *   nomor, kode, tahun, dan kode_surat (semua segmen setelah nomor urut).
+     * Tetap benar untuk format lama (tanpa prefix) maupun baru (dengan DST).
+     */
+    function nomor_surat_parse($nomor_surat)
+    {
+        $p = explode('/', (string) $nomor_surat);
+        $n = count($p);
+        return [
+            'nomor'      => trim($p[0] ?? ''),
+            'kode'       => trim($p[$n - 2] ?? ''),
+            'tahun'      => trim($p[$n - 1] ?? ''),
+            'kode_surat' => implode('/', array_map('trim', array_slice($p, 1))),
+        ];
+    }
+}

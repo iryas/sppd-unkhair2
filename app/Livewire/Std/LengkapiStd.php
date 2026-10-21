@@ -92,16 +92,14 @@ class LengkapiStd extends Component
 
     public function pecah_nomor_std($nomor_std)
     {
-        $pecah = explode("/", $nomor_std);
-        $n = count($pecah);
-        // STD format {nomor}/UN44/{kode}/{tahun} (tanpa DST); baca dari belakang
-        $this->nomor_surat = trim($pecah[0]);
-        $this->kode_surat = implode("/", array_map('trim', array_slice($pecah, 1)));
-        $kode_surat = trim($pecah[$n - 2]);
-        $tahun = trim($pecah[$n - 1]);
+        $parse = nomor_surat_parse($nomor_std);
+        $this->nomor_surat = $parse['nomor'];
+        $this->kode_surat = $parse['kode_surat'];
+        $kode_surat = $parse['kode'];
+        $tahun = $parse['tahun'];
 
         $get = KodeSurat::where('kode', $kode_surat)->first();
-        $kode = "DST/UN44" . "/" . $kode_surat;
+        $kode = surat_kode($kode_surat);
         $jenis_surat = 'st';
         $keterangan = auth()->user()->name . ' membuat STD ' . ($get?->keterangan ?? '');
         $this->riwayat_nomor_surat = [

@@ -113,16 +113,12 @@ class ReviewSppd extends Component
 
     public function generate_nomor_std($nomor_spd)
     {
-        // pecah nomor_sppd dalam bentuk array
-        $pecah = explode("/", $nomor_spd);
-
-        // $nomor = '01';
-        // parse dari belakang biar handle SPPD format lama (4 seg) & baru DST (5 seg)
-        $n = count($pecah);
-        $nomor = trim($pecah[0]);
-        $kode_surat = trim($pecah[$n - 2]);
-        $tahun = trim($pecah[$n - 1]);
-        $kode = "DST/UN44" . "/" . $kode_surat; // STD ikut format DST (sama seperti SPPD)
+        // pecah nomor SPPD (robust, lewat helper) lalu susun nomor STD dgn format sama
+        $parse = nomor_surat_parse($nomor_spd);
+        $nomor = $parse['nomor'];
+        $kode_surat = $parse['kode'];
+        $tahun = $parse['tahun'];
+        $kode = surat_kode($kode_surat);
         $jenis_surat = 'st';
         $keterangan = auth()->user()->name . ', PPK auto dibuatkan STD setelah menyetujui usulan SPPD ' . $nomor_spd;
 
@@ -144,7 +140,7 @@ class ReviewSppd extends Component
             'keterangan' => $keterangan
         ];
 
-        return $nomor . "/" . $kode . "/" . $tahun;
+        return nomor_surat_build($nomor, $kode_surat, $tahun);
     }
 
     public function simpan_riwayat_nomor_surat($std_id)
